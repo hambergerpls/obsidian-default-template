@@ -36,7 +36,7 @@ export default class DefaultTemplatePlugin extends Plugin {
 
 		// Only apply to truly new files (created within the last 200 milliseconds)
 		// to avoid triggering on files created by sync or other processes
-		const isNew = (Date.now() - freshFile.stat.ctime) < 200;
+		const isNew = (Date.now() - freshFile.stat.mtime) < 200;
 		if (!isNew) return;
 		
 		const content = await this.app.vault.read(freshFile);
