@@ -35,7 +35,6 @@ export default class DefaultTemplatePlugin extends Plugin {
 		if (!(freshFile instanceof TFile)) return;
 		
 		const content = await this.app.vault.read(freshFile);
-		if (content.length > 0) return;
 
 		const folderPath = freshFile.parent?.path || '';
 		const mapping = this.settings.folderMappings.find(m => {
@@ -64,7 +63,7 @@ export default class DefaultTemplatePlugin extends Plugin {
 		}
 
 		// 2. Handle Template
-		if (templatePath) {
+		if (templatePath && !(content.length > 0)) {
 			const templateContent = await this.templateManager.getTemplateContent(templatePath);
 			if (templateContent) {
 				const finalContent = this.templateManager.applyVariables(templateContent, freshFile.basename);
