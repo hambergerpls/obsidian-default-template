@@ -34,7 +34,7 @@ export default class DefaultTemplatePlugin extends Plugin {
 		const freshFile = this.app.vault.getAbstractFileByPath(file.path);
 		if (!(freshFile instanceof TFile)) return;
 
-		// Only apply to truly new files (created within the last 2 seconds)
+		// Only apply to truly new files (created within the last 200 milliseconds)
 		// to avoid triggering on files created by sync or other processes
 		const isNew = (Date.now() - freshFile.stat.ctime) < 200;
 		if (!isNew) return;
