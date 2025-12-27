@@ -1,4 +1,5 @@
 import { App, moment, TFile } from 'obsidian';
+import { v4 as uuidv4 } from 'uuid';
 
 export class FilenameManager {
 	app: App;
@@ -14,6 +15,9 @@ export class FilenameManager {
 
 		// Replace {{title}}
 		filename = filename.replace(/{{title}}/g, originalTitle);
+
+		// Replace {{uuid}}
+		filename = filename.replace(/{{uuid}}/g, () => uuidv4());
 
 		// Replace {{date}} and {{date:FORMAT}}
 		filename = filename.replace(/{{date(?::([^}]+))?}}/g, (_, format: string | undefined) => {
