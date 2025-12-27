@@ -36,12 +36,15 @@ export class FilenameManager {
 	async renameFile(file: TFile, newName: string) {
 		if (!newName || file.basename === newName) return;
 
-		const newPath = `${file.parent?.path}/${newName}.${file.extension}`;
-		
+		let finalName = newName;
+		let newPath = `${file.parent?.path}/${finalName}.${file.extension}`;
+		let counter = 1;
+
 		// Check if file already exists to avoid collision
-		if (this.app.vault.getAbstractFileByPath(newPath)) {
-			console.warn(`File ${newPath} already exists. Skipping rename.`);
-			return;
+		while (this.app.vault.getAbstractFileByPath(newPath)) {
+			finalName = `${newName} ${counter}`;
+			newPath = `${file.parent?.path}/${finalName}.${file.extension}`;
+			counter++;
 		}
 
 		await this.app.fileManager.renameFile(file, newPath);
