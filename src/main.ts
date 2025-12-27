@@ -38,7 +38,19 @@ export default class DefaultTemplatePlugin extends Plugin {
 		if (content.length > 0) return;
 
 		const folderPath = freshFile.parent?.path || '';
-		const mapping = this.settings.folderMappings.find(m => folderPath.startsWith(m.folder) && m.folder !== '');
+		const mapping = this.settings.folderMappings.find(m => {
+			if (!m.folder) return false;
+			if (m.isRegex) {
+				try {
+					const regex = new RegExp(m.folder);
+					return regex.test(folderPath);
+				} catch (e) {
+					console.error(`Invalid regex in folder mapping: ${m.folder}`, e);
+					return false;
+				}
+			}
+			return folderPath.startsWith(m.folder);
+		});
 		
 		const templatePath = mapping?.templatePath || this.settings.defaultTemplatePath;
 		const filenamePattern = mapping?.filenamePattern || this.settings.defaultFilenamePattern;

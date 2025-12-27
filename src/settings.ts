@@ -3,6 +3,7 @@ import DefaultTemplatePlugin from "./main";
 
 export interface FolderMapping {
 	folder: string;
+	isRegex: boolean;
 	templatePath: string;
 	filenamePattern: string;
 }
@@ -70,10 +71,17 @@ export class DefaultTemplateSettingTab extends PluginSettingTab {
 		this.plugin.settings.folderMappings.forEach((mapping, index) => {
 			const s = new Setting(containerEl)
 				.addText(text => text
-					.setPlaceholder('Folder path')
+					.setPlaceholder('Folder path or regex')
 					.setValue(mapping.folder)
 					.onChange(async (value) => {
 						mapping.folder = value;
+						await this.plugin.saveSettings();
+					}))
+				.addToggle(toggle => toggle
+					.setTooltip('Use regular expression')
+					.setValue(mapping.isRegex)
+					.onChange(async (value) => {
+						mapping.isRegex = value;
 						await this.plugin.saveSettings();
 					}))
 				.addText(text => text
@@ -109,6 +117,7 @@ export class DefaultTemplateSettingTab extends PluginSettingTab {
 				.onClick(async () => {
 					this.plugin.settings.folderMappings.push({
 						folder: '',
+						isRegex: false,
 						templatePath: '',
 						filenamePattern: ''
 					});
