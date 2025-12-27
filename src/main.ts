@@ -33,6 +33,11 @@ export default class DefaultTemplatePlugin extends Plugin {
 		// Check if file still exists and is empty
 		const freshFile = this.app.vault.getAbstractFileByPath(file.path);
 		if (!(freshFile instanceof TFile)) return;
+
+		// Only apply to truly new files (created within the last 2 seconds)
+		// to avoid triggering on files created by sync or other processes
+		const isNew = (Date.now() - freshFile.stat.ctime) < 200;
+		if (!isNew) return;
 		
 		const content = await this.app.vault.read(freshFile);
 
